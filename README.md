@@ -16,4 +16,4 @@ Aplikasi web statis (satu file `index.html`) untuk mengarsipkan bukti parkir dan
 - Android/Chrome: buka alamat GitHub Pages, menu titik tiga > **Instal aplikasi** / **Tambahkan ke layar utama**.
 - iPhone/Safari: tombol Bagikan > **Tambah ke Layar Utama**.
 - Setelah dibuka sekali dengan internet, aplikasi bisa dipakai offline.
-- Saat memperbarui `index.html`, ubah `CACHE = "arsip-pt-v2"` di `sw.js` (mis. `v2`) agar versi baru terambil.
+- Saat memperbarui `index.html`, ubah `CACHE = "arsip-pt-v4"` di `sw.js` (mis. `v2`) agar versi baru terambil.

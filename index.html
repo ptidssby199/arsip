@@ -76,6 +76,7 @@ body{background:#fff;color:#000}
 <div class="card" id="inst" hidden>
   <b>📲 Pasang sebagai aplikasi</b>
   <div id="instTx" style="color:var(--mut);font-size:14px;margin-top:6px"></div>
+  <div id="diag" style="color:var(--mut);font-size:12px;margin-top:6px"></div>
   <button class="btn" id="instBtn" type="button" hidden>Instal aplikasi</button>
 </div>
 
@@ -88,7 +89,10 @@ body{background:#fff;color:#000}
   <label>Jumlah (Rp)</label>
   <input type="number" id="jml" inputmode="numeric" min="0" placeholder="mis. 10000">
   <label>Foto struk / bukti</label>
-  <div class="pic"><input type="file" id="foto" accept="image/*"><img id="prev" alt="" hidden></div>
+  <div class="rw"><button class="btn2" id="bKam" type="button">📷 Ambil foto</button><button class="btn2" id="bGal" type="button">🖼️ Dari galeri</button></div>
+  <input type="file" id="kamera" accept="image/*" capture="environment" hidden>
+  <input type="file" id="foto" accept="image/*" hidden>
+  <div class="pic"><img id="prev" alt="" hidden><span id="fn" style="color:var(--mut);font-size:13px"></span></div>
   <div id="msg"></div>
   <button class="btn" id="simpan" type="button">Simpan ke arsip</button>
 </div>
@@ -149,14 +153,18 @@ function setJenis(j){
 $("bP").onclick=function(){setJenis("parkir")};
 $("bT").onclick=function(){setJenis("tol")};
 
-$("foto").onchange=function(e){
-  var f=e.target.files[0];if(!f){foto="";$("prev").hidden=true;return}
+$("bKam").onclick=function(){$("kamera").click()};
+$("bGal").onclick=function(){$("foto").click()};
+$("kamera").onchange=function(e){pilih(e)};
+$("foto").onchange=function(e){pilih(e)};
+function pilih(e){
+  var f=e.target.files[0];if(!f)return;$("fn").textContent="Memproses foto...";
   var r=new FileReader();
   r.onload=function(){var im=new Image();im.onload=function(){
     var m=1600,s=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");
     c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
     c.getContext("2d").drawImage(im,0,0,c.width,c.height);
-    foto=c.toDataURL("image/jpeg",.8);$("prev").src=foto;$("prev").hidden=false;
+    foto=c.toDataURL("image/jpeg",.8);$("prev").src=foto;$("prev").hidden=false;$("fn").textContent="Foto siap";
   };im.src=r.result};
   r.readAsDataURL(f);
 };
@@ -168,7 +176,7 @@ $("simpan").onclick=function(){
   dbPut([rec]).then(function(){data.unshift(rec);bersih()}).catch(function(){$("msg").textContent="Gagal menyimpan. Penyimpanan perangkat mungkin penuh."});
 };
 function bersih(){
-  $("msg").textContent="";$("tempat").value="";$("jml").value="";$("foto").value="";foto="";$("prev").hidden=true;
+  $("msg").textContent="";$("tempat").value="";$("jml").value="";$("foto").value="";$("kamera").value="";$("fn").textContent="";foto="";$("prev").hidden=true;
   render();
 };
 
@@ -230,7 +238,9 @@ openDb().then(function(ok){if(!ok)$("msg").textContent="Database tidak tersedia 
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 var dp=null,standalone=false;
 try{standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){}
+function diag(t){var d=$("diag");d.textContent=(d.textContent?d.textContent+" | ":"")+t}
 function instShow(t,btn){$("inst").hidden=false;$("instTx").textContent=t;$("instBtn").hidden=!btn}
+diag("Mode: "+(standalone?"aplikasi":"browser")+" | Alamat: "+location.protocol+"//"+location.host);
 if(!standalone){
   var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
   if(location.protocol.indexOf("http")!==0)instShow("Halaman dibuka dari file lokal, jadi tidak bisa dipasang. Buka lewat alamat HTTPS (mis. GitHub Pages).",false);
@@ -240,7 +250,7 @@ if(!standalone){
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;if(!standalone)instShow("Pasang agar bisa dibuka dari layar utama dan dipakai offline.",true)});
 window.addEventListener("appinstalled",function(){$("inst").hidden=true;dp=null});
 $("instBtn").onclick=function(){if(!dp)return;dp.prompt();dp.userChoice.then(function(){dp=null;$("instBtn").hidden=true})};
-try{if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0)navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}
+try{if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0)navigator.serviceWorker.register("sw.js").then(function(){return navigator.serviceWorker.ready}).then(function(){diag("Offline: siap")}).catch(function(){diag("Offline: gagal")})}catch(e){}
 })();
 </script>
 </body>
