@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arsip Parkir &amp; Tol</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Arsip P&amp;T">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--tx:#14202b;--mut:#64748b;--bd:#e2e8f0;--pk:#2563eb;--tl:#ea580c;--ac:#2563eb;--dg:#dc2626;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e141b;--card:#18212b;--tx:#e8eef5;--mut:#94a3b8;--bd:#2a3644;--pk:#60a5fa;--tl:#fb923c;--ac:#60a5fa;--dg:#f87171;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e141b;--card:#18212b;--tx:#e8eef5;--mut:#94a3b8;--bd:#2a3644;--pk:#60a5fa;--tl:#fb923c;--ac:#60a5fa;--dg:#f87171;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:14px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:12px}
+.seg button{border:0;padding:10px;border-radius:8px;background:transparent;color:var(--mut);font:600 15px inherit;cursor:pointer}
+.seg button.on{background:var(--card);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+input[type=text],input[type=date],input[type=number]{width:100%;padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:16px inherit}
+.pic{display:flex;align-items:center;gap:10px;margin-top:4px}
+.pic img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--bd)}
+.btn{border:0;border-radius:10px;padding:12px;background:var(--ac);color:#fff;font:600 16px inherit;width:100%;margin-top:14px;cursor:pointer}
+.btn2{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:9px 12px;font:14px inherit;cursor:pointer}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sum div{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px}
+.sum small{color:var(--mut);display:block;font-size:12px}
+.sum b{font-size:14px}
+.flt{display:flex;gap:6px;margin-bottom:10px}
+.flt button{flex:1;padding:8px;border:1px solid var(--bd);border-radius:20px;background:var(--card);color:var(--mut);font:14px inherit;cursor:pointer}
+.flt button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.it{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;margin-bottom:8px}
+.it img,.it .ph{width:56px;height:56px;border-radius:10px;object-fit:cover;flex:none;background:var(--bg);display:grid;place-items:center;color:var(--mut);font-size:11px;cursor:pointer}
+.it .i{flex:1;min-width:0}
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}
+.tag.p{background:var(--pk)}.tag.t{background:var(--tl)}
+.it .n{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.it .d{color:var(--mut);font-size:13px}
+.it .a{font-weight:700;text-align:right}
+.it .x{background:none;border:0;color:var(--dg);font-size:13px;cursor:pointer;padding:2px 0}
+.empty{text-align:center;color:var(--mut);padding:24px}
+#mod{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
+#mod img{max-width:100%;max-height:100%;border-radius:10px}
+#msg{color:var(--dg);font-size:13px;margin-top:8px;min-height:1em}
+.rw{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+select{width:100%;padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:16px inherit}
+#rep{display:none}
+@media print{
+body{background:#fff;color:#000}
+.w,#mod{display:none!important}
+#rep{display:block;font-size:12px;color:#000;background:#fff}
+#rep h2{margin:0 0 4px;font-size:18px}
+#rep table{width:100%;border-collapse:collapse;margin:10px 0}
+#rep th,#rep td{border:1px solid #888;padding:4px 6px;text-align:left}
+#rep td.r,#rep th.r{text-align:right}
+#rep .g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+#rep .b{border:1px solid #888;padding:6px;break-inside:avoid}
+#rep .b img{width:100%;max-height:300px;object-fit:contain;display:block;margin-top:4px}
+@page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>🧾 Arsip Parkir &amp; Tol</h1>
+
+<div class="card">
+  <div class="seg"><button id="bP" class="on" type="button">🅿️ Parkir</button><button id="bT" type="button">🛣️ Tol</button></div>
+  <label>Tanggal</label>
+  <input type="date" id="tgl">
+  <label id="lTempat">Tempat parkir</label>
+  <input type="text" id="tempat" placeholder="mis. Mall Grand Indonesia">
+  <label>Jumlah (Rp)</label>
+  <input type="number" id="jml" inputmode="numeric" min="0" placeholder="mis. 10000">
+  <label>Foto struk / bukti</label>
+  <div class="pic"><input type="file" id="foto" accept="image/*"><img id="prev" alt="" hidden></div>
+  <div id="msg"></div>
+  <button class="btn" id="simpan" type="button">Simpan ke arsip</button>
+</div>
+
+<div class="card">
+  <b>🖨️ Laporan untuk dicetak</b>
+  <div class="rw"><div><label>Dari tanggal</label><input type="date" id="dari"></div><div><label>Sampai tanggal</label><input type="date" id="sampai"></div></div>
+  <label>Jenis</label>
+  <select id="rjenis"><option value="all">Parkir &amp; Tol</option><option value="parkir">Parkir saja</option><option value="tol">Tol saja</option></select>
+  <button class="btn" id="cetak" type="button">Cetak laporan + foto</button>
+</div>
+
+<div class="sum">
+  <div><small>Parkir</small><b id="sP">Rp0</b></div>
+  <div><small>Tol</small><b id="sT">Rp0</b></div>
+  <div><small>Total</small><b id="sA">Rp0</b></div>
+</div>
+
+<div class="flt">
+  <button data-f="all" class="on">Semua</button><button data-f="parkir">Parkir</button><button data-f="tol">Tol</button>
+</div>
+<div id="list"></div>
+<div style="text-align:center;margin:14px 0"><button class="btn2" id="bak" type="button">💾 Cadangkan</button> <button class="btn2" id="res" type="button">📂 Pulihkan</button> <input type="file" id="resf" accept=".json" hidden> <button class="btn2" id="csv" type="button">⬇️ Ekspor CSV</button></div>
+</div>
+<div id="rep"></div>
+<div id="mod"><img id="big" alt="Foto bukti"></div>
+
+<script>
+(function(){
+var KEY="arsip-parkir-tol-v1",jenis="parkir",filter="all",foto="",data=[];
+var $=function(i){return document.getElementById(i)};
+var db=null;
+function openDb(){return new Promise(function(res){
+ try{var r=indexedDB.open("arsip-parkir-tol",1);
+ r.onupgradeneeded=function(){r.result.createObjectStore("arsip",{keyPath:"id"})};
+ r.onsuccess=function(){db=r.result;res(true)};
+ r.onerror=function(){res(false)};
+ }catch(e){res(false)}})}
+function tx(fn){return new Promise(function(res,rej){
+ var t=db.transaction("arsip","readwrite"),s=t.objectStore("arsip");fn(s);
+ t.oncomplete=function(){res(true)};t.onerror=function(){rej(t.error)};t.onabort=function(){rej(t.error)}})}
+function load(){return new Promise(function(res){
+ if(!db){data=[];return res()}
+ var q=db.transaction("arsip","readonly").objectStore("arsip").getAll();
+ q.onsuccess=function(){data=q.result||[];res()};q.onerror=function(){data=[];res()}})}
+function dbPut(arr){return tx(function(s){arr.forEach(function(x){s.put(x)})})}
+function dbDel(id){return tx(function(s){s.delete(id)})}
+function rp(n){return "Rp"+Number(n||0).toLocaleString("id-ID")}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function tglFmt(s){var d=new Date(s+"T00:00:00");return isNaN(d)?s:d.toLocaleDateString("id-ID",{day:"numeric",month:"short",year:"numeric"})}
+function today(){var d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+
+function setJenis(j){
+  jenis=j;$("bP").className=j==="parkir"?"on":"";$("bT").className=j==="tol"?"on":"";
+  $("lTempat").textContent=j==="parkir"?"Tempat parkir":"Pintu tol";
+  $("tempat").placeholder=j==="parkir"?"mis. Mall Grand Indonesia":"mis. GT Cawang Utama";
+}
+$("bP").onclick=function(){setJenis("parkir")};
+$("bT").onclick=function(){setJenis("tol")};
+
+$("foto").onchange=function(e){
+  var f=e.target.files[0];if(!f){foto="";$("prev").hidden=true;return}
+  var r=new FileReader();
+  r.onload=function(){var im=new Image();im.onload=function(){
+    var m=1600,s=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");
+    c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+    c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+    foto=c.toDataURL("image/jpeg",.8);$("prev").src=foto;$("prev").hidden=false;
+  };im.src=r.result};
+  r.readAsDataURL(f);
+};
+
+$("simpan").onclick=function(){
+  var t=$("tgl").value,p=$("tempat").value.trim(),j=parseInt($("jml").value,10);
+  if(!t||!p||!(j>=0)||isNaN(j)){$("msg").textContent="Lengkapi tanggal, "+(jenis==="parkir"?"tempat parkir":"pintu tol")+", dan jumlah.";return}
+  var rec={id:Date.now(),jenis:jenis,tgl:t,tempat:p,jml:j,foto:foto};
+  dbPut([rec]).then(function(){data.unshift(rec);bersih()}).catch(function(){$("msg").textContent="Gagal menyimpan. Penyimpanan perangkat mungkin penuh."});
+};
+function bersih(){
+  $("msg").textContent="";$("tempat").value="";$("jml").value="";$("foto").value="";foto="";$("prev").hidden=true;
+  render();
+};
+
+document.querySelectorAll(".flt button").forEach(function(b){
+  b.onclick=function(){filter=b.dataset.f;document.querySelectorAll(".flt button").forEach(function(x){x.className=x===b?"on":""});render()}
+});
+
+function render(){
+  var sp=0,st=0;data.forEach(function(d){if(d.jenis==="parkir")sp+=d.jml;else st+=d.jml});
+  $("sP").textContent=rp(sp);$("sT").textContent=rp(st);$("sA").textContent=rp(sp+st);
+  var rows=data.filter(function(d){return filter==="all"||d.jenis===filter}).sort(function(a,b){return a.tgl<b.tgl?1:a.tgl>b.tgl?-1:b.id-a.id});
+  if(!rows.length){$("list").innerHTML='<div class="empty">Belum ada arsip.</div>';return}
+  $("list").innerHTML=rows.map(function(d){
+    return '<div class="it">'+(d.foto?'<img src="'+d.foto+'" data-v="'+d.id+'" alt="Bukti">':'<div class="ph">Tanpa foto</div>')+
+    '<div class="i"><span class="tag '+(d.jenis==="parkir"?"p":"t")+'">'+(d.jenis==="parkir"?"PARKIR":"TOL")+'</span><div class="n">'+esc(d.tempat)+'</div><div class="d">'+tglFmt(d.tgl)+'</div></div>'+
+    '<div><div class="a">'+rp(d.jml)+'</div><button class="x" data-x="'+d.id+'">Hapus</button></div></div>';
+  }).join("");
+}
+
+$("list").onclick=function(e){
+  var v=e.target.dataset.v,x=e.target.dataset.x;
+  if(v){var d=data.filter(function(i){return i.id==v})[0];if(d){$("big").src=d.foto;$("mod").style.display="flex"}}
+  if(x&&confirm("Hapus arsip ini?")){dbDel(Number(x)).then(function(){data=data.filter(function(i){return i.id!=x});render()})}
+};
+$("mod").onclick=function(){$("mod").style.display="none"};
+
+$("cetak").onclick=function(){
+  var a=$("dari").value,b=$("sampai").value,j=$("rjenis").value;
+  var rows=data.filter(function(d){return (!a||d.tgl>=a)&&(!b||d.tgl<=b)&&(j==="all"||d.jenis===j)}).sort(function(x,y){return x.tgl<y.tgl?-1:x.tgl>y.tgl?1:x.id-y.id});
+  if(!rows.length){alert("Tidak ada data pada periode ini.");return}
+  var sp=0,st=0;rows.forEach(function(d){if(d.jenis==="parkir")sp+=d.jml;else st+=d.jml});
+  var per=(a?tglFmt(a):"awal")+" s/d "+(b?tglFmt(b):"sekarang");
+  var h="<h2>Laporan Parkir &amp; Tol</h2><div>Periode: "+per+"</div><table><tr><th>No</th><th>Tanggal</th><th>Jenis</th><th>Tempat / Pintu</th><th class=r>Jumlah</th></tr>";
+  rows.forEach(function(d,i){h+="<tr><td>"+(i+1)+"</td><td>"+tglFmt(d.tgl)+"</td><td>"+(d.jenis==="parkir"?"Parkir":"Tol")+"</td><td>"+esc(d.tempat)+"</td><td class=r>"+rp(d.jml)+"</td></tr>"});
+  h+="<tr><th colspan=4 class=r>Total Parkir</th><th class=r>"+rp(sp)+"</th></tr><tr><th colspan=4 class=r>Total Tol</th><th class=r>"+rp(st)+"</th></tr><tr><th colspan=4 class=r>Total Keseluruhan</th><th class=r>"+rp(sp+st)+"</th></tr></table>";
+  h+="<b>Lampiran foto bukti</b><div class=g>";
+  rows.forEach(function(d,i){h+="<div class=b><b>"+(i+1)+". "+(d.jenis==="parkir"?"Parkir":"Tol")+" - "+esc(d.tempat)+"</b><br>"+tglFmt(d.tgl)+" | "+rp(d.jml)+(d.foto?"<img src=\""+d.foto+"\" alt=\"\">":"<br><i>Tanpa foto</i>")+"</div>"});
+  h+="</div>";
+  $("rep").innerHTML=h;
+  setTimeout(function(){window.print()},300);
+};
+
+$("csv").onclick=function(){
+  if(!data.length)return;
+  var l=["Jenis,Tanggal,Tempat/Pintu,Jumlah"].concat(data.map(function(d){return [d.jenis,d.tgl,'"'+d.tempat.replace(/"/g,'""')+'"',d.jml].join(",")}));
+  var a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(l.join("\n"));a.download="arsip-parkir-tol.csv";a.click();
+};
+
+$("bak").onclick=function(){
+ var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({app:"arsip-parkir-tol",data:data})],{type:"application/json"}));
+ a.download="cadangan-arsip-"+today()+".json";a.click()};
+$("res").onclick=function(){$("resf").click()};
+$("resf").onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();
+ r.onload=function(){try{var o=JSON.parse(r.result),arr=(o.data||[]).filter(function(x){return x&&x.id&&x.tgl});
+  dbPut(arr).then(load).then(function(){render();alert(arr.length+" data dipulihkan.")})
+ }catch(err){alert("File cadangan tidak valid.")}};r.readAsText(f);e.target.value=""};
+$("tgl").value=today();
+openDb().then(function(ok){if(!ok)$("msg").textContent="Database tidak tersedia di browser ini.";return load()}).then(function(){render()});
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+try{if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0)navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}
+})();
+</script>
+</body>
+</html>
