@@ -73,6 +73,11 @@ body{background:#fff;color:#000}
 <body>
 <div class="w">
 <h1>🧾 Arsip Parkir &amp; Tol</h1>
+<div class="card" id="inst" hidden>
+  <b>📲 Pasang sebagai aplikasi</b>
+  <div id="instTx" style="color:var(--mut);font-size:14px;margin-top:6px"></div>
+  <button class="btn" id="instBtn" type="button" hidden>Instal aplikasi</button>
+</div>
 
 <div class="card">
   <div class="seg"><button id="bP" class="on" type="button">🅿️ Parkir</button><button id="bT" type="button">🛣️ Tol</button></div>
@@ -223,6 +228,18 @@ $("resf").onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new Fi
 $("tgl").value=today();
 openDb().then(function(ok){if(!ok)$("msg").textContent="Database tidak tersedia di browser ini.";return load()}).then(function(){render()});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+var dp=null,standalone=false;
+try{standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true}catch(e){}
+function instShow(t,btn){$("inst").hidden=false;$("instTx").textContent=t;$("instBtn").hidden=!btn}
+if(!standalone){
+  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(location.protocol.indexOf("http")!==0)instShow("Halaman dibuka dari file lokal, jadi tidak bisa dipasang. Buka lewat alamat HTTPS (mis. GitHub Pages).",false);
+  else if(ios)instShow("Di iPhone: ketuk tombol Bagikan di Safari, lalu pilih Tambah ke Layar Utama.",false);
+  else instShow("Jika tombol instal belum muncul, gunakan menu browser lalu pilih Instal aplikasi.",false);
+}
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();dp=e;if(!standalone)instShow("Pasang agar bisa dibuka dari layar utama dan dipakai offline.",true)});
+window.addEventListener("appinstalled",function(){$("inst").hidden=true;dp=null});
+$("instBtn").onclick=function(){if(!dp)return;dp.prompt();dp.userChoice.then(function(){dp=null;$("instBtn").hidden=true})};
 try{if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0)navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}
 })();
 </script>
